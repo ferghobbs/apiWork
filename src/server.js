@@ -9,13 +9,14 @@ app.set('port', process.env.PORT ||3000 );
 
 app.get("/", (req,res)=> res.send("Hello world"));
 
-app.get('/dale', (req,res)=> res.send("Dale"));
 
 app.post('/peticionCallpicker', function(request, response) {
 
     console.log(request.body);      // your JSON
-    response.send(request.body.name); 
-    
+    response.send('Duraracion: '  +request.body.duration+ ', Respondido por:'+ request.body.answered_by); 
+
 });
+
+
 
  export default app;
