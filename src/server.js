@@ -18,18 +18,21 @@ app.use(express.json());
 app.set('port', process.env.PORT ||3000 );
 
 app.get("/", (req,res)=> res.send("Hello world"));
-
+/*
 
 app.post('/peticionCallpicker', function(request, response) {
-    cargarASpreadsheet(request),
-    console.log(request.body);      // your JSON
-    response.send('Duraracion: '  +request.body.duration+ ', Respondido por:'+ request.body.answered_by); 
+       // your JSON
+    cargarASpreadsheet(request)
+      response.send('Transeferencia de datos exitosa'); 
+    
+    
 
 });
 
 function cargarASpreadsheet(request){
-    
 
+let cargado = false;
+  
 fs.readFile('credentials.json', (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     // Authorize a client with credentials, then call the Google Sheets API.
@@ -82,12 +85,24 @@ fs.readFile('credentials.json', (err, content) => {
   }
   
   function listMajors(auth) {
-  
+
+    let colA;
+    let colB;
+    let colC;
+    if(request.body.duration){
+      colA=request.body.duration;
+    }else { colA="0"}
+    if(request.body.answered_by){
+      colB=request.body.answered_by;
+    }else { colB=" "};
+    if(request.body.date){
+      colC=request.body.date;
+    }else { colC=" "}
     const sheets = google.sheets({version: 'v4', auth});
     let values = [
       [
         // Cell values ...
-        request.body.duration, request.body.answered_by
+        colA,colB,colC
       ],
       // Additional rows ...
     ];
@@ -111,6 +126,6 @@ fs.readFile('credentials.json', (err, content) => {
   
   }
 
-}
+}*/
 
  export default app;
