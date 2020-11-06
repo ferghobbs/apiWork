@@ -1,5 +1,5 @@
 import express from 'express'
-
+const crypto = require('crypto');
 const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
@@ -80,44 +80,36 @@ fs.readFile('credentials.json', (err, content) => {
   
   function listMajors(auth) {
 
-    let colA;
-    let colB;
-    let colC;
+    let values;
+  
     if(callpicker){
-    if(request.body.duration){
-      colA=request.body.duration;
-    }else { colA="0"}
-    if(request.body.answered_by){
-      colB=request.body.answered_by;
-    }else { colB=" "};
-    if(request.body.date){
-      colC=request.body.date;
-    }else { colC=" "}
+      values= [
+        [
+          // Cell values ...
+          request.body.duration, request.body.answered_by, request.body.date
+        ],
+        // Additional rows ...
+      ];
+    
   }else{
-    if(request.body.visitor.name){
-      colB=request.body.chatId;
-    }else { colB="0"}
-    if(request.body.time){
-      colC=request.body.time;
-    }else { colC=" "};
-    colA=ciudad;
-
-  }
-    const sheets = google.sheets({version: 'v4', auth});
-    let values = [
+    [
       [
         // Cell values ...
-        colA,colB,colC
+        ciudad,request.body.name, request.body.visitor.name , request.body.visitor.city
       ],
       // Additional rows ...
     ];
+    
+    }
+    const sheets = google.sheets({version: 'v4', auth});
+
     const resource = {
       values,
     };
   
     sheets.spreadsheets.values.append({
       'spreadsheetId':'1RcLoACX_Fgs-KB0_au40fX5KILxvHY5I6kotC4sD0x0',
-      'range':hoja+'!B2:C',
+      'range':hoja+'!A2:C',
       'valueInputOption': 'RAW',
       'resource': resource,
     }, (err, result) => {
@@ -133,9 +125,10 @@ fs.readFile('credentials.json', (err, content) => {
 
 }
  //tawk to 
+// Poner Llave Secreta que te genera tawk.to al crear un webhook 
 
  const WEBHOOK_SECRET = 'ed48d55bb633064d008dd320f9bfd8ab2a8fba6d15500b60ed55439443d3eca7ee8f86cc619e2775c34352485fc497d9';
-const crypto = require('crypto');
+const sucursal = 'Buenos aires'
 function verifySignature (body, signature) {
   console.log("Verificando cuenta tawk to")
     const digest = crypto
@@ -151,7 +144,7 @@ app.post('/tawkto', function (req, res, next) {
         
         
     }else{
-      cargarASpreadsheet(req,'Tawk.to',false,"Buenos Aires")
+      cargarASpreadsheet(req,'Tawk.to',false,sucursal)
       res.sendStatus(200)
       console.log("Verificacion tawk to succes")
     }     
