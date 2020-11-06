@@ -94,7 +94,7 @@ fs.readFile('credentials.json', (err, content) => {
       colC=request.body.date;
     }else { colC=" "}
   }else{
-    if(request.body.chatId){
+    if(request.body.visitor.name){
       colB=request.body.chatId;
     }else { colB="0"}
     if(request.body.time){
@@ -148,10 +148,15 @@ app.post('/tawkto', function (req, res, next) {
     if (!verifySignature(JSON.stringify(req.body), req.headers['x-tawk-signature'])) {
          console.log("verification failed")
         console.log("Verificacion tawk to fallo")
+        
+        
+    }else{
+      cargarASpreadsheet(req,'Tawk.to',false,"Buenos Aires")
+      res.sendStatus(200)
     }   
-    console.log(next)
+  
     console.log("Verificacion tawk to succes")
-     cargarASpreadsheet(req,'Tawk.to',false,"Buenos Aires")
+     
     
     // verification success
 
