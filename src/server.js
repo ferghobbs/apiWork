@@ -134,7 +134,7 @@ fs.readFile('credentials.json', (err, content) => {
 
 }
  //tawk to 
-
+/*
  const WEBHOOK_SECRET = 'f334e5566383cd35f936ab4a04ded5d9158e07adec0ced66d39208e8d8f4d5e3bd805a895de901183a3dec1d861c5586';
 const crypto = require('crypto');
 function verifySignature (body, signature) {
@@ -155,5 +155,23 @@ app.post('/tawkto', function (req, res, next) {
     
     // verification success
 
+});*/
+const WEBHOOK_SECRET = '72f470c369b43a6ed7d5102950ed7174e74fac891f26e43d557c8f0969c14bd25f674b5a1c7f145e16b3d8dfb6ca798e';
+const crypto = require('crypto');
+function verifySignature (body, signature) {
+  const digest = crypto
+      .createHmac('sha1', WEBHOOK_SECRET)
+      .update(body)
+      .digest('hex');
+  return signature === digest;
+};
+app.post('/webhooks', function (req, res, next) {
+  console.log("verificando")
+  if (!verifySignature(req.rawBody, req.headers['x-tawk-signature'])) {
+      // verification failed
+      console.log("Verificacion tawk to fallo")
+  }
+  console.log("Verificacion tawk to succes")
+  // verification success
 });
  export default app;
