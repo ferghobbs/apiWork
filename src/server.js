@@ -167,9 +167,9 @@ function verifySignature (body, signature) {
 };
 app.post('/webhooks', function (req, res, next) {
   console.log("verificando")
-  console.log(req.rawBody)
+  console.log(req.body)
   console.log(req.headers['x-tawk-signature'])
-  if (!verifySignature(req.rawBody, req.headers['x-tawk-signature'])) {
+  if (!verifySignature(req.body, req.headers['x-tawk-signature'])) {
       // verification failed
       console.log("Verificacion tawk to fallo")
   }
