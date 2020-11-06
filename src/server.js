@@ -17,7 +17,6 @@ app.use(express.json());
 
 app.set('port', process.env.PORT ||4000 );
 
-app.get("/", (req,res)=> res.send("Hello world"));
 
 
 app.post('/peticionCallpicker', function(request, response) {
@@ -150,6 +149,7 @@ app.post('/tawkto', function (req, res, next) {
         // verification failed
       //  console.log("Verificacion tawk to fallo")
     //}   
+    console.log(next)
     console.log("Verificacion tawk to succes")
      cargarASpreadsheet(req,'Tawk.to',false,"Buenos Aires")
     
