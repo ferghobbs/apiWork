@@ -22,14 +22,14 @@ app.get("/", (req,res)=> res.send("Hello world"));
 
 app.post('/peticionCallpicker', function(request, response) {
        // your JSON
-    cargarASpreadsheet(request)
+    cargarASpreadsheet(request,'Prueba callpicker',true,"")
       response.send('Transeferencia de datos exitosa'); 
     
     
 
 });
 
-function cargarASpreadsheet(request){
+function cargarASpreadsheet(request,hoja,callpicker,ciudad){
 
 let cargado = false;
   
@@ -84,6 +84,7 @@ fs.readFile('credentials.json', (err, content) => {
     let colA;
     let colB;
     let colC;
+    if(callpicker){
     if(request.body.duration){
       colA=request.body.duration;
     }else { colA="0"}
@@ -93,6 +94,16 @@ fs.readFile('credentials.json', (err, content) => {
     if(request.body.date){
       colC=request.body.date;
     }else { colC=" "}
+  }else{
+    if(request.body.chatId){
+      colB=request.body.chatId;
+    }else { colB="0"}
+    if(request.body.time){
+      colC=request.body.time;
+    }else { colC=" "};
+    colA=ciudad;
+
+  }
     const sheets = google.sheets({version: 'v4', auth});
     let values = [
       [
@@ -107,7 +118,7 @@ fs.readFile('credentials.json', (err, content) => {
   
     sheets.spreadsheets.values.append({
       'spreadsheetId':'1RcLoACX_Fgs-KB0_au40fX5KILxvHY5I6kotC4sD0x0',
-      'range':'Prueba callpicker!B2:C',
+      'range':hoja+'!B2:C',
       'valueInputOption': 'RAW',
       'resource': resource,
     }, (err, result) => {
@@ -122,5 +133,25 @@ fs.readFile('credentials.json', (err, content) => {
   }
 
 }
+ //tawk to 
 
+ const WEBHOOK_SECRET = 'f334e5566383cd35f936ab4a04ded5d9158e07adec0ced66d39208e8d8f4d5e3bd805a895de901183a3dec1d861c5586';
+const crypto = require('crypto');
+function verifySignature (body, signature) {
+    const digest = crypto
+        .createHmac('sha1', WEBHOOK_SECRET)
+        .update(body)
+        .digest('hex');
+    return signature === digest;
+};
+app.post('/tawkto', function (req, res, next) {
+    if (!verifySignature(req.rawBody, req.headers['x-tawk-signature'])) {
+        // verification failed
+        console.log("Verificacion tawk to fallo")
+    }   
+     cargarASpreadsheet(req,'Prueba callpicker',false,"Buenos Aires")
+    
+    // verification success
+
+});
  export default app;
