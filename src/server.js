@@ -134,7 +134,7 @@ fs.readFile('credentials.json', (err, content) => {
 }
  //tawk to 
 
- const WEBHOOK_SECRET = 'f334e5566383cd35f936ab4a04ded5d9158e07adec0ced66d39208e8d8f4d5e3bd805a895de901183a3dec1d861c5586';
+ const WEBHOOK_SECRET = 'ed48d55bb633064d008dd320f9bfd8ab2a8fba6d15500b60ed55439443d3eca7ee8f86cc619e2775c34352485fc497d9';
 const crypto = require('crypto');
 function verifySignature (body, signature) {
   console.log("Verificando cuenta tawk to")
