@@ -92,10 +92,10 @@ fs.readFile('credentials.json', (err, content) => {
       ];
     
   }else{
-    [
+    values=[
       [
         // Cell values ...
-        ciudad,request.body.name, request.body.visitor.name , request.body.visitor.city
+        ciudad, request.body.visitor.name ,request.body.time, request.body.visitor.city
       ],
       // Additional rows ...
     ];
