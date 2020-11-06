@@ -146,17 +146,15 @@ function verifySignature (body, signature) {
 };
 app.post('/tawkto', function (req, res, next) {
     if (!verifySignature(JSON.stringify(req.body), req.headers['x-tawk-signature'])) {
-         console.log("verification failed")
+         
         console.log("Verificacion tawk to fallo")
         
         
     }else{
       cargarASpreadsheet(req,'Tawk.to',false,"Buenos Aires")
       res.sendStatus(200)
-    }   
-  
-    console.log("Verificacion tawk to succes")
-     
+      console.log("Verificacion tawk to succes")
+    }     
     
     // verification success
 
