@@ -10,7 +10,7 @@ const app = express();
 app.use(express.json());
 //setings
 
-app.set('port', process.env.PORT ||4000 );
+app.set('port', process.env.PORT ||3000 );
 
 app.get('/', function () {
       console.log("conecto correctamente")
