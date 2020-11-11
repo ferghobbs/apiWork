@@ -1,6 +1,6 @@
 import express from 'express'
 
-const googlesheets = require('./spreadsheets.js');
+const tawkto = require('./tawkto.js');
 const googleHoja = require('./spreadsheet/index.js')
 
 
@@ -31,7 +31,7 @@ const sucursal = 'Buenos aires'
 
 app.post('/tawkto', function (req, res, next) {
 
-  googlesheets.cargarTawkto(req,res,WEBHOOK_SECRET,sucursal)
+  tawkto.cargarTawkto(req,res,WEBHOOK_SECRET,sucursal)
 
 });
 
