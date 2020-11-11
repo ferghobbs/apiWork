@@ -9,16 +9,9 @@ var _express = _interopRequireDefault(require("express"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-var crypto = require('crypto');
-
-var fs = require('fs');
-
-var readline = require('readline');
-
-var _require = require('googleapis'),
-    google = _require.google;
-
 var googlesheets = require('./spreadsheets.js');
+
+var googleHoja = require('./spreadsheet/index.js');
 
 var app = (0, _express["default"])();
 app.use(_express["default"].json()); //setings
@@ -26,7 +19,7 @@ app.use(_express["default"].json()); //setings
 app.set('port', process.env.PORT || 4000);
 app.post('/peticionCallpicker', function (request, response) {
   // your JSON
-  googlesheets.cargarASpreadsheet(request, 'Prueba callpicker', true, "");
+  googleHoja.cargarAhoja(request, 'Prueba callpicker', true, "");
   response.send('Transeferencia de datos exitosa');
 }); //tawk to 
 // Poner Llave Secreta que te genera tawk.to al crear un webhook 
@@ -36,5 +29,14 @@ var sucursal = 'Buenos aires';
 app.post('/tawkto', function (req, res, next) {
   googlesheets.cargarTawkto(req, res, WEBHOOK_SECRET, sucursal);
 });
+/*
+const WEBHOOK_SECRET1= 'fwe'
+const sucursal1 = 'Cordoba'
+app.post('/'+sucursal1, function (req, res, next) {
+
+  googlesheets.cargarTawkto(req,res,WEBHOOK_SECRET1,sucursal1)
+
+});*/
+
 var _default = app;
 exports["default"] = _default;

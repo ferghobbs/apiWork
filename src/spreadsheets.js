@@ -1,4 +1,6 @@
 const crypto = require('crypto');
+const googleSheets = require('./spreadsheet/index.js')
+/*
 const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
@@ -103,7 +105,7 @@ function cargarASpreadsheet(request,hoja,callpicker,ciudad){
       }
     
     }
-
+*/
 
     function cargarTawkto(req,res,WEBHOOK_SECRET,sucursal){
       
@@ -113,7 +115,7 @@ function cargarASpreadsheet(request,hoja,callpicker,ciudad){
       
       
   }else{
-    cargarASpreadsheet(req,'Tawk.to',false,sucursal)
+    googleSheets.cargarAhoja(req,'Tawk.to',false,sucursal)
     res.sendStatus(200)
     console.log("Verificacion tawk to succes")
   }     
@@ -135,4 +137,4 @@ function cargarASpreadsheet(request,hoja,callpicker,ciudad){
 
 exports.cargarTawkto = cargarTawkto;
 
-exports.cargarASpreadsheet = cargarASpreadsheet;
+//exports.cargarASpreadsheet = cargarASpreadsheet;
