@@ -12,8 +12,10 @@ app.use(express.json());
 
 app.set('port', process.env.PORT ||3000 );
 
-app.get('/', function () {
+app.get('/', function (request, response) {
+
       console.log("conecto correctamente")
+      response.send('Conecto correctamente')
 })
 
 app.post('/peticionCallpicker', function(request, response) {

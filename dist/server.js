@@ -17,8 +17,9 @@ var app = (0, _express["default"])();
 app.use(_express["default"].json()); //setings
 
 app.set('port', process.env.PORT || 3000);
-app.get('/', function () {
+app.get('/', function (request, response) {
   console.log("conecto correctamente");
+  response.send('Conecto correctamente');
 });
 app.post('/peticionCallpicker', function (request, response) {
   // your JSON
