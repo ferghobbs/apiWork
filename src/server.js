@@ -16,7 +16,7 @@ app.set('port', process.env.PORT ||4000 );
 
 app.post('/peticionCallpicker', function(request, response) {
        // your JSON
-       googleHoja.cargarAhoja(request,'Prueba callpicker',true,"")
+       googleHoja.cargarAhoja(request,'Callpicker',true,"")
       response.send('Transeferencia de datos exitosa'); 
     
     

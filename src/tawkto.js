@@ -10,7 +10,7 @@ const googleSheets = require('./spreadsheet/index.js')
       
       
   }else{
-    googleSheets.cargarAhoja(req,'Tawk.to',false,sucursal)
+    googleSheets.cargarAhoja(req,'Tawkto',false,sucursal)
     res.sendStatus(200)
     console.log("Verificacion tawk to succes")
   }     
