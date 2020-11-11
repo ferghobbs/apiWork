@@ -10,6 +10,10 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+var denta = require('./dentalinkserver.js');
+
+var cron = require('node-cron');
+
 function main() {
   return _main.apply(this, arguments);
 }
@@ -24,7 +28,9 @@ function _main() {
             return _server["default"].listen(_server["default"].get('port'));
 
           case 2:
-            console.log('Server on port ', 3000);
+            console.log('Server on port ', _server["default"].get('port')); //cron.schedule('* * * * * *', () => {
+            //    denta.actualizarData();
+            //   });
 
           case 3:
           case "end":
