@@ -44,7 +44,7 @@ app.post('/Coapa', function (req, res, next) {
   tawkto.cargarTawkto(req,res,WEBHOOK_SECRET1,sucursal1)
 });
 
-const WEBHOOK_SECRET2 = '8f5e6345ff835d9d8259abefc348013befa462facfeaf350b1dec2323f8b1c43ebd68fc4719dd08fcaec68851c57d73a';
+const WEBHOOK_SECRET2 = '86c6773b7397fb41e89fce697a422ebcb545e7897ccef3705a5232da14395f69bbf17a249def2c81003bdf0a48c0dfbb';
 const sucursal2 = 'Boca del rio'
 
 app.post('/BocaDelRio', function (req, res, next) {
