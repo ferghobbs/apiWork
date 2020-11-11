@@ -37,12 +37,19 @@ app.post('/tawkto', function (req, res, next) {
 });
 
 const WEBHOOK_SECRET1 = '8f5e6345ff835d9d8259abefc348013befa462facfeaf350b1dec2323f8b1c43ebd68fc4719dd08fcaec68851c57d73a';
-const sucursal1 = 'Buenos aires'
+const sucursal1 = 'Coapa'
 
 app.post('/Coapa', function (req, res, next) {
 
   tawkto.cargarTawkto(req,res,WEBHOOK_SECRET1,sucursal1)
 });
 
+const WEBHOOK_SECRET2 = '8f5e6345ff835d9d8259abefc348013befa462facfeaf350b1dec2323f8b1c43ebd68fc4719dd08fcaec68851c57d73a';
+const sucursal2 = 'Boca del rio'
+
+app.post('/BocaDelRio', function (req, res, next) {
+
+  tawkto.cargarTawkto(req,res,WEBHOOK_SECRET2,sucursal2)
+});
 
  export default app;
