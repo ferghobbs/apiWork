@@ -12,7 +12,9 @@ app.use(express.json());
 
 app.set('port', process.env.PORT ||4000 );
 
-
+app.get('/', function () {
+      console.log("conecto correctamente")
+})
 
 app.post('/peticionCallpicker', function(request, response) {
        // your JSON
