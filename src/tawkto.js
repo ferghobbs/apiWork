@@ -7,6 +7,8 @@ const googleSheets = require('./spreadsheet/index.js')
     if (!verifySignature(JSON.stringify(req.body), req.headers['x-tawk-signature'],WEBHOOK_SECRET)) {
          
       console.log("Verificacion tawk to fallo")
+      console.log("Fallo acceso a :"+sucursal)
+    
       res.sendStatus(500)
       
   }else{
