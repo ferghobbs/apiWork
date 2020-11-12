@@ -62,12 +62,14 @@ function cargarASpreadsheet(request, hoja, callpicker, ciudad) {
     var values;
 
     if (callpicker) {
-      if (!request.body.caller_id) {
-        request.body.caller_id = "Indefinido";
+      var colA = "indefinido";
+
+      if (request.body.caller_id) {
+        colA = request.body.caller_id;
       }
 
       values = [[// Cell values ...
-      request.body.caller_id, request.body.duration, request.body.answered_by, request.body.date.substr(0, 10), request.body.date.substr(11, 8), request.body.city, request.body.callpicker_number] // Additional rows ...
+      colA, request.body.duration, request.body.answered_by, request.body.date.substr(0, 10), request.body.date.substr(11, 8), request.body.city, request.body.callpicker_number] // Additional rows ...
       ];
     } else {
       values = [[// Cell values ...
