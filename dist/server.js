@@ -69,7 +69,7 @@ var sucursal19 = 'Lindavista';
 app.post('/Lindavista', function (req, res, next) {
   tawkto.cargarTawkto(req, res, WEBHOOK_SECRET19, sucursal19);
 });
-var WEBHOOK_SECRET9 = 'cf9ed82c93f42a870860554f990ebd727958a4cc60ce5bcfee1be59f6fa3a35a360a54793a417d502cea7e080a1aecc5';
+var WEBHOOK_SECRET9 = 'fb12e57be68045356284255ce4ef73f1562537f7481472383b874aecba4e8d53902b14bc8c49aa6bae959c49448b9c6a';
 var sucursal9 = 'Narvarte';
 app.post('/Narvarte', function (req, res, next) {
   tawkto.cargarTawkto(req, res, WEBHOOK_SECRET9, sucursal9);
