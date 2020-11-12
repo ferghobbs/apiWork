@@ -9,9 +9,15 @@ var cron = require('node-cron');
 async function main(){
     await app.listen(app.get('port'))
     console.log('Server on port ', app.get('port'))
-    //cron.schedule('* * * * * *', () => {
-    //    denta.actualizarData();
-   //   });
+    //denta.actualizarData();
+    //cron.schedule('*/5 * * * * *', () => {
+        //console.log('entre')
+        
+       
+      //},{
+       // scheduled: true,
+        //timezone: "America/Mexico_City"
+      //});
 }
 
 

@@ -28,9 +28,13 @@ function _main() {
             return _server["default"].listen(_server["default"].get('port'));
 
           case 2:
-            console.log('Server on port ', _server["default"].get('port')); //cron.schedule('* * * * * *', () => {
-            //    denta.actualizarData();
-            //   });
+            console.log('Server on port ', _server["default"].get('port')); //denta.actualizarData();
+            //cron.schedule('*/5 * * * * *', () => {
+            //console.log('entre')
+            //},{
+            // scheduled: true,
+            //timezone: "America/Mexico_City"
+            //});
 
           case 3:
           case "end":

@@ -25,6 +25,7 @@ app.post('/peticionCallpicker', function (request, response) {
   // your JSON
   googleHoja.cargarAhoja(request, 'Callpicker', true, "");
   response.send('Transeferencia de datos exitosa');
+  response.sendStatus(200);
 }); //tawk to 
 // Poner Llave Secreta que te genera tawk.to al crear un webhook 
 

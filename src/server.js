@@ -22,6 +22,7 @@ app.post('/peticionCallpicker', function(request, response) {
        // your JSON
        googleHoja.cargarAhoja(request,'Callpicker',true,"")
       response.send('Transeferencia de datos exitosa'); 
+      response.sendStatus(200)
     
     
 
