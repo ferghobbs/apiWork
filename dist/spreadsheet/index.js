@@ -71,11 +71,11 @@ function cargarASpreadsheet(request, hoja, callpicker, ciudad) {
       var colB = "indefinido";
 
       if (request.body.dialed_number) {
-        colA = request.body.dialed_number;
+        colB = request.body.dialed_number;
       }
 
       values = [[// Cell values ...
-      colA, colbB, request.body.call_type, request.body.duration, request.body.answered_by, request.body.dialed_by, request.body.call_status, request.body.date.substr(0, 10), request.body.date.substr(11, 8), request.body.city, request.body.callpicker_number] // Additional rows ...
+      colA, colB, request.body.call_type, request.body.duration, request.body.answered_by, request.body.dialed_by, request.body.call_status, request.body.date.substr(0, 10), request.body.date.substr(11, 8), request.body.city, request.body.callpicker_number] // Additional rows ...
       ];
     } else {
       values = [[// Cell values ...
