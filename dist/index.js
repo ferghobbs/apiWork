@@ -12,6 +12,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 var denta = require('./dentalinkserver.js');
 
+var monday = require('./monday.js');
+
 var cron = require('node-cron');
 
 function main() {
@@ -29,7 +31,8 @@ function _main() {
 
           case 2:
             console.log('Server on port ', _server["default"].get('port'));
-            denta.actualizarData(); //cron.schedule('*/5 * * * * *', () => {
+            monday.subirFilaNueva; //denta.actualizarData();
+            //cron.schedule('*/5 * * * * *', () => {
             //console.log('entre')
             //},{
             // scheduled: true,
