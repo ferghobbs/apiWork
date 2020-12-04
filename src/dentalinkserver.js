@@ -8,23 +8,127 @@ var infoDentalinkSinprocesar;
 // Para sacar presupuesto de citas, obtenerlo desde id_tratamiento 
 // monday : presupuesto, 
 async function actualizacionDiaria(){
-    let aux = '"2020-11-16"'
-    let date = '"2020-11-16"'
+    let date = obtenerDia();
+    let agregarEstado = ', "id_estado":{"eq":"2"}}'
     console.log("Actualizacion de monday diaria iniciada... ");
-
     //cargarCitasDiarias();
-    infoDentalinkSinprocesar = await pedirDatos('citas','?q={"fecha":{"eq":'+date+'}}')
-    //infoDentalinkSinprocesar = await pedirDatos('cajas','')
-    //infoDentalinkSinprocesar = await pedirDatos('sucursales','')
+    infoDentalinkSinprocesar = await pedirDatos('citas','?q={"fecha":{"eq":'+date+'}, "id_estado":{"eq":"2"}}')
+
+
     //infoDentalinkSinprocesar = await buscarPresupuesto(894)
     //infoDentalinkSinprocesar = await buscarProximasCitas(aux,988)
-    console.log(infoDentalinkSinprocesar.data.length)
-    //cargarSucursales(infoDentalinkSinprocesar.data)
+    console.log("Se cargan citas del dia: "+ infoDentalinkSinprocesar.data[0].fecha)
+    console.log("cantidad de citas en el dia: "+ infoDentalinkSinprocesar.data.length.toString())
+    async function loop(largo, data) {
+      for (let j = 0; j < largo; j++) {
+        console.log("Estado de la cita: "+data[j].id_estado.toString()+ " : "+ data[j].estado_cita)
+          let  itemName,idPaciente,nombreDentista,fechaCita,horaFC,motivoConsulta,primerPago, presupuesto,proximaCitaDia,horaPC,abonoLibre,telefono,sucursal;
+          let tratamiento = await buscarTratamiento(data[j].id_tratamiento)
+          
+          console.log("Nombre del tratamiento: "+ tratamiento.nombre)
+          let citasTratamiento = await pedirDatos('tratamientos/'+tratamiento.id+'/citas','')
+          //console.log(data[j].idPaciente)
+          if(esPrimeraCitaAtendida(citasTratamiento.data,data[j].id ))
+          { 
+            let paciente  = await pedirDatos('pacientes/'+data[j].id_paciente,'');
+            let telefono = paciente.data.celular;
+            if(telefono == undefined){
+              telefono = pactien.data.telefono;
+            }
 
-    
-   
+            console.log("Se encontro primera cita")
+            
+            itemName = data[j].nombre_paciente;
+            idPaciente = data[j].id_paciente.toString();
+            nombreDentista =tratamiento.nombre
+            fechaCita = data[j].fecha;
+            horaFC = data[j].hora_inicio;
+            motivoConsulta = undefined; // TODO: Ver como arreglar esto
+            primerPago = tratamiento.abonado;
+            presupuesto = tratamiento.total;
+            let aux = obtenerProximaCita(citasTratamiento.data,data[j].id);
+            proximaCitaDia = aux.fecha;
+            horaPC = aux.hora;
+            abonoLibre = tratamiento.abono_libre;
+            telefono = telefono;
+            sucursal = tratamiento.nombre_sucursal
+            //cargo en monday
+            //TODO: Cargar en google sheet
+            //await google.cargarDentalink(citas.data[i],'dentalinkCitas',false,presupuesto)
+            await monday.subirFilaAMonday(itemName,idPaciente,nombreDentista,fechaCita,horaFC,motivoConsulta,primerPago,presupuesto,proximaCitaDia,horaPC,abonoLibre,telefono,sucursal);
+
+          }
+          
+  
+      }
+  };
+  loop(infoDentalinkSinprocesar.data.length,infoDentalinkSinprocesar.data);
 }
 
+async function actualizacionDiariaSpreadSheet()
+{
+  //TODO Funcion para cargar  excel
+}
+function obtenerDia()
+{
+  let date1 = new Date();
+  let date = (date1 - 1000* 60 *60 *24)
+  //console.log(new Date(date));
+  return formatDate(date)
+
+}
+function esPrimeraCitaAtendida(citasTratamiento,citaId )
+{   
+    let esPrimeraCita= false;
+    let i = citasTratamiento.length-1;
+    let loop = true;
+    console.log("CAntidad de citas por tratamiento : "+ (i+1).toString());
+    while(loop && i>=0)
+    {
+      if(citasTratamiento[i].estado_cita == "Atendido")
+      {
+        if(citasTratamiento[i].id == citaId){
+          esPrimeraCita = true;
+          loop=false;
+        }
+        else{
+          esPrimeraCita= false;
+          loop = false;
+        }
+      }
+      i--;
+    }
+    return esPrimeraCita;
+}
+
+function obtenerProximaCita(citasTratamiento,citaId)
+{ 
+  let proxCita ={ fecha: undefined , hora :undefined};
+  let i = citasTratamiento.length-1;
+  let loop = true;
+  while(loop && i>=0)
+  {
+    if(citasTratamiento[i].id == citaId)
+      {
+        if(i-1>=0)
+        {
+        proxCita.fecha = citasTratamiento[i-1].fecha;
+        proxCita.hora = citasTratamiento[i-1].hora_inicio;
+        loop=false;
+        // TODO: Chequear si la proxima cita no se cancelo
+      }
+    }
+    i--;
+  }  
+  return proxCita;
+}
+
+async function obtenerTelefonoPaciente(idPaciente)
+{
+  let paciente = await pedirDatos('pacientes/'+idPaciente,'');
+  console.log(paciente.data.celular)
+  return paciente.data.celular 
+}
 async function cargarSucursales(sucursales){
   for(let i = 0 ; i<sucursales.length; i++){
     await new Promise(resolve => setTimeout(resolve,6000));
@@ -39,25 +143,30 @@ async function cargarCitasDiarias(){
   async function loop(largo) {
     for (let i = 0; i < largo; i++) {
         await new Promise(resolve => setTimeout(resolve,5000));
-        let itemName= 'Cliente '+ citas.data[i].id_paciente
-        let presupuesto = await buscarPresupuesto(citas.data[i].id_tratamiento)
-        let fechaPC;
-        let horarioPC
-        let proximaCita = await buscarProximasCitas('"'+citas.data[i].fecha+'"',citas.data[i].id_paciente)
-        if(proximaCita) {
-          fechaPC = proximaCita.fecha
-          horarioPC = proximaCita.hora_inicio
+        
+        if(esClienteNuevo(citas.data[i]))
+        {
+          let itemName= + citas.data[i].nombre_paciente;
+          let presupuesto = await buscarTratamiento(citas.data[i].id_tratamiento)
+          let fechaPC;
+          let horarioPC
+          let proximaCita = await buscarProximasCitas('"'+citas.data[i].fecha+'"',citas.data[i].id_paciente)
+          if(proximaCita) {
+            fechaPC = proximaCita.fecha
+            horarioPC = proximaCita.hora_inicio
+          }
+          await google.cargarDentalink(citas.data[i],'dentalinkCitas',false,presupuesto)
+          await monday.subirFilaAMonday(itemName,normalize(citas.data[i].nombre_sucursal),presupuesto.total,citas.data[i].fecha,citas.data[i].hora_inicio,fechaPC,horarioPC,citas.data[i].nombre_paciente,citas.data[i].estado_cita)
+
         }
-        await google.cargarDentalink(citas.data[i],'dentalinkCitas',false,presupuesto)
-        await monday.subirFilaAMonday(itemName,normalize(citas.data[i].nombre_sucursal),presupuesto.total,citas.data[i].fecha,citas.data[i].hora_inicio,fechaPC,horarioPC,citas.data[i].nombre_paciente,citas.data[i].estado_cita)
 
     }
 };
 loop(citas.data.length);
-
-
 }
-async function buscarPresupuesto(idTratamiento){
+
+
+async function buscarTratamiento(idTratamiento){
   let tratamiento = await pedirDatos('tratamientos/'+idTratamiento,'')
   return tratamiento.data
 }
@@ -66,7 +175,8 @@ async function buscarProximasCitas(date,id){
   let citas = await pedirDatos('pacientes/'+id+'/citas','?q={"fecha":{"gt":'+date+'}}')
   return citas.data[0]
 }
-function pedirDatos(extension,queryString){
+async function pedirDatos(extension,queryString){
+  await new Promise(resolve => setTimeout(resolve,2000));
   return new Promise(resolve=>{
   var url = '/api/v1/'+extension;
   var url = encodeURI(url+queryString);
@@ -122,3 +232,18 @@ var normalize = (function() {
   }
  
 })()
+
+
+function formatDate(date) {
+  var d = new Date(date),
+      month = '' + (d.getMonth()+1 ),
+      day = '' + d.getDate()+ '"',
+      year = '"'+d.getFullYear();
+
+  if (month.length < 2) 
+      month = '0' + month;
+  if (day.length < 3) 
+      day = '0' + day;
+
+  return [year, month, day].join('-');
+}

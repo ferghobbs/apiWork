@@ -2,32 +2,41 @@ const fs = require('fs');
 const readline = require('readline');
 const fetch = require('node-fetch')
 
-var token = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjkxMTY2NzI1LCJ1aWQiOjE3MjI2MDI3LCJpYWQiOiIyMDIwLTExLTE3VDE2OjM1OjQwLjAwMFoiLCJwZXIiOiJtZTp3cml0ZSJ9.m_PZDojXOXIANAMdAsKLbSs9haIuxbwXKcaDfufpJWw'
-var sucursalIdDefault = 'topics'
+//var token = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjkxMTY2NzI1LCJ1aWQiOjE3MjI2MDI3LCJpYWQiOiIyMDIwLTExLTE3VDE2OjM1OjQwLjAwMFoiLCJwZXIiOiJtZTp3cml0ZSJ9.m_PZDojXOXIANAMdAsKLbSs9haIuxbwXKcaDfufpJWw'
+//var sucursalIdDefault = 'topics'
 var item_name = 'Default'
-var idBoard= '861032256';
+//var idBoard= '861032256';
+
+var idBoard = "861085342";
+var token = "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjg4NTI2OTU5LCJ1aWQiOjEwNjYyNDcwLCJpYWQiOiIyMDIwLTEwLTIwVDAxOjE1OjA1LjAwMFoiLCJwZXIiOiJtZTp3cml0ZSJ9._IxIFFWwfuegTLrfQxDAWNjAbXBfTy_4yquoosrp7xc";
 
 
+ async function subirFilaNueva(itemName,idPaciente,nombreDentista,fechaCita,horaFC,motivoConsulta,primerPago, presupuesto,proximaCitaDia,horaPC,abonoLibre,telefono,sucursal){
 
+  //let sucursalMonday = await buscarIdSucursal(sucursal)
 
- async function subirFilaNueva(itemName,sucursal,presupuesto,fechaCita,horaFC,proximaCitaDia,horaPC,cliente,estadoCita){
-
-  let sucursalMonday = await buscarIdSucursal(sucursal)
-
-   let query5 = 'mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:861032256,group_id:'+sucursalMonday+', item_name:$myItemName, column_values:$columnVals) { id } }';
+   let query5 = 'mutation ($myItemName: String!, $columnVals: JSON!) { create_item (board_id:861085342, item_name:$myItemName, column_values:$columnVals) { id } }';
+   //numMotivoConsulta = codificarMotivoConsulta(motivoConsulta);
 
   let vars = {
     "myItemName" : itemName || item_name,
     "columnVals" : JSON.stringify({
-      "texto0" : sucursal,
-      "fecha" : {"date" : fechaCita ,"time": horaFC },
-      "fecha1":{"date" : proximaCitaDia ,"time": horaPC },
-      "texto" : estadoCita,
-      "n_meros": presupuesto||0,
-      "texto4": cliente
-
+      "texto" : idPaciente, //id paciente
+      "texto9" : nombreDentista, // odontolog general 
+      "fecha" : {"date" : fechaCita ,"time": horaFC }, // fecha valoracion
+      "tipo_paciente7" : "NUEVO" ,  // Tipo paciente, (nuevo, revalorizacion, actual ), va siempre nuevo? hay que fijarse si con 1 se llena nuevo
+      "men__desplegable5" : motivoConsulta,// Esto esta pesimo 
+      "n_meros" : primerPago, 
+      "due_date":{"date" : fechaCita ,"time": horaFC }, // Fecha primera cita? idem fecha valorizacion? 
+      "date":{"date" : proximaCitaDia ,"time": horaPC }, // Proximo contacto 
+      "numbers" : presupuesto, // presupuesto
+      "n_meros2": primerPago+abonoLibre, // Pago estimado
+      "numbers8" : (primerPago+abonoLibre)*100/presupuesto , // Probabilidad de pago? 
+      "texto5" : telefono,
+      "texto1": sucursal
     })
   };
+  let query6= 'mutation {create_item (board_id: 861085342, item_name: "new item") { id }}'
   fetch ("https://api.monday.com/v2", {
     method: 'post',
     headers: {
@@ -41,6 +50,8 @@ var idBoard= '861032256';
   }).then(res => res.json())
   .then(res => console.log(res.data));
 }
+
+
 //Agrega un grupo
 async function agregarGrupo(nombre){
   let queryGroup = 'mutation {create_group (board_id:'+idBoard+', group_name:'+nombre+') {id}}'
@@ -57,7 +68,45 @@ async function agregarGrupo(nombre){
   .then(res => console.log(JSON.stringify(res, null, 2)));
 }
 
+function codificarMotivoConsulta(motivoConsulta1)
+{ 
+  motivoConsultaAux= motivoConsulta1.toLowerCase();
+  numaro= 1;
+  switch(motivoConsultaAux) {
+    case "Alineadores Invisibles":
+      numero=2;
+      // code block
+      break;
+    case "Implantes":
+      numero=3;
+      // code block
+      break;
+    case "Blanqueamiento":
+      numero=4;
+      break;    
+    case "Caries":
+      numero=5;
+      break;
+    case "Dolor - Urgencia":
+      numero=6;
+      break;
+    case "Diseño de Sonrisa":
+      numero=7;
+      break;
+    case "Prótesis":
+      numero=8;
+      break;
+    case "Extracciones y/o Cirugías":
+      numero=9;
+      break;
+    case "Limpieza":
+      numero=10;
+      break;
+    
 
+    } 
+  return numero;
+}
 
 // Carga en sucursalesMonday.json los idgroup y nombres
 
