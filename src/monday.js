@@ -30,8 +30,8 @@ var token = "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjg4NTI2OTU5LCJ1aWQiOjEwNjYyNDcwLCJpYW
       "due_date":{"date" : fechaCita ,"time": horaFC }, // Fecha primera cita? idem fecha valorizacion? 
       "date":{"date" : proximaCitaDia ,"time": horaPC }, // Proximo contacto 
       "numbers" : presupuesto, // presupuesto
-      "n_meros2": primerPago+abonoLibre, // Pago estimado
-      "numbers8" : (primerPago+abonoLibre)*100/presupuesto , // Probabilidad de pago? 
+      "n_meros2": abonoLibre, // Pago estimado
+      "numbers8" : (primerPago-abonoLibre) , // Probabilidad de pago? 
       "texto5" : telefono,
       "texto1": sucursal
     })
