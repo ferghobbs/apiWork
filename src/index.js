@@ -16,7 +16,7 @@ async function main(){
     
     //monday.subirFilaAMonday('Gonzalo',"15654","clinicaboutiquedental@gmail.com","2020-12-03","12:00:00",undefined,1500,50000,"2020-12-08","20:16:15",20000,"+5215551870867")
     
-    cron.schedule('0 0 8 * * *', () => {
+    cron.schedule('0 0 3 * * *', () => {
         console.log('entre')
         denta.actualizarData();
       },{
