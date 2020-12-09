@@ -1,5 +1,9 @@
 "use strict";
 
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 var fs = require('fs');
 
 var readline = require('readline');
@@ -10,7 +14,7 @@ var _require = require('googleapis'),
 var SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 var TOKEN_PATH = 'token.json';
 
-function cargarASpreadsheet(request, hoja, callpicker, ciudad) {
+function cargarASpreadsheet(request, hoja, callpicker, ciudad, tawkto) {
   var cargado = false;
   fs.readFile('credentials.json', function (err, content) {
     if (err) return console.log('Error loading client secret file:', err); // Authorize a client with credentials, then call the Google Sheets API.
@@ -27,7 +31,6 @@ function cargarASpreadsheet(request, hoja, callpicker, ciudad) {
 
     fs.readFile(TOKEN_PATH, function (err, token) {
       if (err) return getNewToken(oAuth2Client, callback);
-      console.log(JSON.parse(token));
       oAuth2Client.setCredentials(JSON.parse(token));
       callback(oAuth2Client);
     });
@@ -74,14 +77,21 @@ function cargarASpreadsheet(request, hoja, callpicker, ciudad) {
         colB = request.body.dialed_number;
       }
 
-      values = [[// Cell values ...
-      colA, colB, request.body.call_type, request.body.duration, request.body.answered_by, request.body.dialed_by, request.body.call_status, request.body.date.substr(0, 10), request.body.date.substr(11, 8), request.body.city, request.body.callpicker_number] // Additional rows ...
+      values = [[// Cell values ... callpicker
+      colA, colB, request.body.call_type, request.body.duration, request.body.answered_by, request.body.dialed_by, request.body.call_status, request.body.date.substr(0, 10), request.body.date.substr(11, 8), request.body.city, request.body.callpicker_number, request.body.municipality, request.body.state] // Additional rows ...
       ];
     } else {
-      console.log(request.body);
-      values = [[// Cell values ...
-      ciudad, request.body.visitor.name, request.body.time.substr(0, 10), request.body.time.substr(11, 8), request.body.visitor.city] // Additional rows ...
-      ];
+      if (tawkto) {
+        console.log(request.body);
+        values = [[// Cell values ... tawkto
+        ciudad, request.body.visitor.name, request.body.time.substr(0, 10), request.body.time.substr(11, 8), request.body.visitor.city, request.body.message.text] // Additional rows ...
+        ];
+      } else {
+        // let dentalink = { name : itemName , id: idPaciente , nombreDent : nombreDentista }
+        values = [[// Cell values ... dentalink
+        request.name, request.id, request.nombreDent] // Additional rows ...
+        ];
+      }
     }
 
     var sheets = google.sheets({
@@ -107,4 +117,30 @@ function cargarASpreadsheet(request, hoja, callpicker, ciudad) {
   }
 }
 
+function cargarDentalink(_x, _x2, _x3, _x4) {
+  return _cargarDentalink.apply(this, arguments);
+}
+
+function _cargarDentalink() {
+  _cargarDentalink = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data, hoja, callpicker, presupuesto) {
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            new Promise(function (resolve) {
+              cargarASpreadsheet(data, hoja, callpicker, presupuesto, false);
+              resolve(true);
+            });
+
+          case 1:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee);
+  }));
+  return _cargarDentalink.apply(this, arguments);
+}
+
 exports.cargarAhoja = cargarASpreadsheet;
+exports.cargarDentalink = cargarDentalink;

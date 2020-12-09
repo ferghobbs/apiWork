@@ -12,8 +12,8 @@ async function actualizacionDiaria(){
     let agregarEstado = ', "id_estado":{"eq":"2"}}'
     console.log("Actualizacion de monday diaria iniciada... ");
     //cargarCitasDiarias();
+    actualizacionASPreadSIn2();
     infoDentalinkSinprocesar = await pedirDatos('citas','?q={"fecha":{"eq":'+date+'}, "id_estado":{"eq":"2"}}')
-
 
     //infoDentalinkSinprocesar = await buscarPresupuesto(894)
     //infoDentalinkSinprocesar = await buscarProximasCitas(aux,988)
@@ -24,40 +24,47 @@ async function actualizacionDiaria(){
         console.log("Estado de la cita: "+data[j].id_estado.toString()+ " : "+ data[j].estado_cita)
           let  itemName,idPaciente,nombreDentista,fechaCita,horaFC,motivoConsulta,primerPago, presupuesto,proximaCitaDia,horaPC,abonoLibre,telefono,sucursal;
           let tratamiento = await buscarTratamiento(data[j].id_tratamiento)
+          let idTratamiento = tratamiento.id;
+          let paciente  = await pedirDatos('pacientes/'+data[j].id_paciente,'');
+           telefono = paciente.data.celular;
+          if(telefono == undefined){
+            telefono = pactien.data.telefono;
+          }
+          let pacNuevo= false;
+          itemName = data[j].nombre_paciente;
+          idPaciente = data[j].id_paciente.toString();
+          nombreDentista =tratamiento.nombre
+          fechaCita = data[j].fecha;
+          horaFC = data[j].hora_inicio;
+          primerPago = tratamiento.abonado;
+          presupuesto = tratamiento.total;
+          abonoLibre = tratamiento.abono_libre;
+          telefono = telefono;
+          sucursal = tratamiento.nombre_sucursal
+          let estadoCita = data[j].estado_cita;
+          
           
           console.log("Nombre del tratamiento: "+ tratamiento.nombre)
           let citasTratamiento = await pedirDatos('tratamientos/'+tratamiento.id+'/citas','')
           //console.log(data[j].idPaciente)
           if(esPrimeraCitaAtendida(citasTratamiento.data,data[j].id ))
           { 
-            let paciente  = await pedirDatos('pacientes/'+data[j].id_paciente,'');
-            let telefono = paciente.data.celular;
-            if(telefono == undefined){
-              telefono = pactien.data.telefono;
-            }
-
+            pacNuevo = true;
             console.log("Se encontro primera cita")
             
-            itemName = data[j].nombre_paciente;
-            idPaciente = data[j].id_paciente.toString();
-            nombreDentista =tratamiento.nombre
-            fechaCita = data[j].fecha;
-            horaFC = data[j].hora_inicio;
             motivoConsulta = undefined; // TODO: Ver como arreglar esto
-            primerPago = tratamiento.abonado;
-            presupuesto = tratamiento.total;
             let aux = obtenerProximaCita(citasTratamiento.data,data[j].id);
             proximaCitaDia = aux.fecha;
             horaPC = aux.hora;
-            abonoLibre = tratamiento.abono_libre;
-            telefono = telefono;
-            sucursal = tratamiento.nombre_sucursal
-            //cargo en monday
-            //TODO: Cargar en google sheet
-            //await google.cargarDentalink(citas.data[i],'dentalinkCitas',false,presupuesto)
-            await monday.subirFilaAMonday(itemName,idPaciente,nombreDentista,fechaCita,horaFC,motivoConsulta,primerPago,presupuesto,proximaCitaDia,horaPC,abonoLibre,telefono,sucursal);
 
+            
+            //cargo en monday
+            
+            await monday.subirFilaAMonday(itemName,idPaciente,nombreDentista,fechaCita,horaFC,motivoConsulta,primerPago,presupuesto,proximaCitaDia,horaPC,abonoLibre,telefono,sucursal);
+            
           }
+          let dentalink = { name : itemName , id: idPaciente , nombreDent : nombreDentista, idT: idTratamiento , estCita : estadoCita,  fechaC : fechaCita , horaC : horaFC , pPago : primerPago, pres : presupuesto , abL : abonoLibre , tel : telefono , suc : sucursal , pNuevo : pacNuevo  }
+          await google.cargarDentalink(dentalink,'dentalinkCitas',false,presupuesto)
           
   
       }
@@ -176,7 +183,7 @@ async function buscarProximasCitas(date,id){
   return citas.data[0]
 }
 async function pedirDatos(extension,queryString){
-  await new Promise(resolve => setTimeout(resolve,2000));
+  await new Promise(resolve => setTimeout(resolve,5000));
   return new Promise(resolve=>{
   var url = '/api/v1/'+extension;
   var url = encodeURI(url+queryString);
@@ -246,4 +253,66 @@ function formatDate(date) {
       day = '0' + day;
 
   return [year, month, day].join('-');
+}
+
+// not equeal to 2
+
+async function actualizacionASPreadSIn2(){
+  let date = obtenerDia();
+  let agregarEstado = ', "id_estado":{"neq":"2"}}'
+  //cargarCitasDiarias();
+  let citas = await pedirDatos('citas','?q={"fecha":{"eq":'+date+'}, "id_estado":{"neq":"2"}}')
+  console.log("cantidad de citas en el dia que no fueron atendidas: "+ citas.data.length.toString())
+
+  async function loop(largo, data) {
+    for (let j = 0; j < largo; j++) {
+      console.log("Estado de la cita: "+data[j].id_estado.toString()+ " : "+ data[j].estado_cita)
+        let  itemName,idPaciente,nombreDentista,fechaCita,horaFC,motivoConsulta,primerPago, presupuesto,proximaCitaDia,horaPC,abonoLibre,telefono,sucursal;
+        let tratamiento = await buscarTratamiento(data[j].id_tratamiento)
+        let idTratamiento = tratamiento.id;
+        let paciente  = await pedirDatos('pacientes/'+data[j].id_paciente,'');
+         telefono = paciente.data.celular;
+        if(telefono == undefined){
+          telefono = pactien.data.telefono;
+        }
+        let pacNuevo= false;
+        itemName = data[j].nombre_paciente;
+        idPaciente = data[j].id_paciente.toString();
+        nombreDentista =tratamiento.nombre
+        fechaCita = data[j].fecha;
+        horaFC = data[j].hora_inicio;
+        primerPago = tratamiento.abonado;
+        presupuesto = tratamiento.total;
+        abonoLibre = tratamiento.abono_libre;
+        telefono = telefono;
+        sucursal = tratamiento.nombre_sucursal
+        let estadoCita = data[j].estado_cita;
+        
+        
+        console.log("Nombre del tratamiento: "+ tratamiento.nombre)
+        let citasTratamiento = await pedirDatos('tratamientos/'+tratamiento.id+'/citas','')
+        //console.log(data[j].idPaciente)
+        if(esPrimeraCitaAtendida(citasTratamiento.data,data[j].id ))
+        { 
+          pacNuevo = true;
+          console.log("Se encontro primera cita")
+          
+          motivoConsulta = undefined; // TODO: Ver como arreglar esto
+          let aux = obtenerProximaCita(citasTratamiento.data,data[j].id);
+          proximaCitaDia = aux.fecha;
+          horaPC = aux.hora;
+
+          
+          //cargo en monday
+          //TODO: Cargar en google sheet
+          //await monday.subirFilaAMonday(itemName,idPaciente,nombreDentista,fechaCita,horaFC,motivoConsulta,primerPago,presupuesto,proximaCitaDia,horaPC,abonoLibre,telefono,sucursal);
+          
+        }
+        let dentalink = { name : itemName , id: idPaciente , nombreDent : nombreDentista, idT: idTratamiento , estCita : estadoCita,  fechaC : fechaCita , horaC : horaFC , pPago : primerPago, pres : presupuesto , abL : abonoLibre , tel : telefono , suc : sucursal , pNuevo : pacNuevo  }
+        await google.cargarDentalink(dentalink,'dentalinkCitas',false,presupuesto)
+        
+
+    }
+};
+loop(citas.data.length,citas.data);
 }

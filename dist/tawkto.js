@@ -9,7 +9,7 @@ function cargarTawkto(req, res, WEBHOOK_SECRET, sucursal) {
     console.log("Verificacion tawk to fallo");
     res.sendStatus(500);
   } else {
-    googleSheets.cargarAhoja(req, 'Tawkto', false, sucursal);
+    googleSheets.cargarAhoja(req, 'Tawkto', false, sucursal, true);
     res.sendStatus(200);
     console.log("Verificacion tawk to succes");
   } // verification success
