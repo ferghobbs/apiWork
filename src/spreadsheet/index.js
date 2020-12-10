@@ -89,7 +89,7 @@ function cargarASpreadsheet(request,hoja,callpicker,ciudad,tawkto){
           }else{//          let dentalink = { name : itemName , id: idPaciente , nombreDent : nombreDentista, idT: idTratamiento , estCita : estadoCita,  fechaC : fechaCita , horaC : horaFC , pPago : primerPago, pres : presupuesto , abL : abonoLibre , tel : telefono , suc : sucursal , pNuevo : pacNuevo  }
 
             values = [[// Cell values ... dentalink
-              request.name,  request.id,request.nombreDent , request.idT , request.estCita, request.fechaC , request.horaC , request.pPago , request.pres , request.abL , request.tel , request.sucursal , request.pNuevo
+              request.name,  request.id,request.nombreDent , request.idT , request.estCita, request.fechaC , request.horaC , request.pPago , request.pres , request.abL , request.tel , request.suc , request.pNuevo
             ] // Additional rows ...
               ];
           }

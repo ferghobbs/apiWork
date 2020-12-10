@@ -12,13 +12,13 @@ async function actualizacionDiaria(){
     let agregarEstado = ', "id_estado":{"eq":"2"}}'
     console.log("Actualizacion de monday diaria iniciada... ");
     //cargarCitasDiarias();
-    actualizacionASPreadSIn2();
+    await actualizacionASPreadSIn2();
     infoDentalinkSinprocesar = await pedirDatos('citas','?q={"fecha":{"eq":'+date+'}, "id_estado":{"eq":"2"}}')
 
     //infoDentalinkSinprocesar = await buscarPresupuesto(894)
     //infoDentalinkSinprocesar = await buscarProximasCitas(aux,988)
     console.log("Se cargan citas del dia: "+ infoDentalinkSinprocesar.data[0].fecha)
-    console.log("cantidad de citas en el dia: "+ infoDentalinkSinprocesar.data.length.toString())
+    console.log("cantidad de citas en el dia que fueron atendidas: "+ infoDentalinkSinprocesar.data.length.toString())
     async function loop(largo, data) {
       for (let j = 0; j < largo; j++) {
         console.log("Estado de la cita: "+data[j].id_estado.toString()+ " : "+ data[j].estado_cita)

@@ -87,9 +87,9 @@ function cargarASpreadsheet(request, hoja, callpicker, ciudad, tawkto) {
         ciudad, request.body.visitor.name, request.body.time.substr(0, 10), request.body.time.substr(11, 8), request.body.visitor.city, request.body.message.text] // Additional rows ...
         ];
       } else {
-        // let dentalink = { name : itemName , id: idPaciente , nombreDent : nombreDentista }
+        //          let dentalink = { name : itemName , id: idPaciente , nombreDent : nombreDentista, idT: idTratamiento , estCita : estadoCita,  fechaC : fechaCita , horaC : horaFC , pPago : primerPago, pres : presupuesto , abL : abonoLibre , tel : telefono , suc : sucursal , pNuevo : pacNuevo  }
         values = [[// Cell values ... dentalink
-        request.name, request.id, request.nombreDent] // Additional rows ...
+        request.name, request.id, request.nombreDent, request.idT, request.estCita, request.fechaC, request.horaC, request.pPago, request.pres, request.abL, request.tel, request.suc, request.pNuevo] // Additional rows ...
         ];
       }
     }

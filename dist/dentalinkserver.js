@@ -31,8 +31,7 @@ function _actualizacionDiaria() {
           case 0:
             _loop = function _loop3() {
               _loop = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(largo, data) {
-                var j, itemName, idPaciente, nombreDentista, fechaCita, horaFC, motivoConsulta, primerPago, presupuesto, proximaCitaDia, horaPC, abonoLibre, telefono, sucursal, tratamiento, citasTratamiento, paciente, _telefono, aux, dentalink;
-
+                var j, itemName, idPaciente, nombreDentista, fechaCita, horaFC, motivoConsulta, primerPago, presupuesto, proximaCitaDia, horaPC, abonoLibre, telefono, sucursal, tratamiento, idTratamiento, paciente, pacNuevo, estadoCita, citasTratamiento, aux, dentalink;
                 return regeneratorRuntime.wrap(function _callee$(_context) {
                   while (1) {
                     switch (_context.prev = _context.next) {
@@ -41,7 +40,7 @@ function _actualizacionDiaria() {
 
                       case 1:
                         if (!(j < largo)) {
-                          _context.next = 38;
+                          _context.next = 44;
                           break;
                         }
 
@@ -52,61 +51,78 @@ function _actualizacionDiaria() {
 
                       case 6:
                         tratamiento = _context.sent;
-                        console.log("Nombre del tratamiento: " + tratamiento.nombre);
+                        idTratamiento = tratamiento.id;
                         _context.next = 10;
-                        return pedirDatos('tratamientos/' + tratamiento.id + '/citas', '');
-
-                      case 10:
-                        citasTratamiento = _context.sent;
-
-                        if (!esPrimeraCitaAtendida(citasTratamiento.data, data[j].id)) {
-                          _context.next = 35;
-                          break;
-                        }
-
-                        _context.next = 14;
                         return pedirDatos('pacientes/' + data[j].id_paciente, '');
 
-                      case 14:
+                      case 10:
                         paciente = _context.sent;
-                        _telefono = paciente.data.celular;
+                        telefono = paciente.data.celular;
 
-                        if (_telefono == undefined) {
-                          _telefono = pactien.data.telefono;
+                        if (telefono == undefined) {
+                          telefono = pactien.data.telefono;
                         }
 
-                        console.log("Se encontro primera cita");
+                        pacNuevo = false;
                         itemName = data[j].nombre_paciente;
                         idPaciente = data[j].id_paciente.toString();
                         nombreDentista = tratamiento.nombre;
                         fechaCita = data[j].fecha;
                         horaFC = data[j].hora_inicio;
-                        motivoConsulta = undefined; // TODO: Ver como arreglar esto
-
                         primerPago = tratamiento.abonado;
                         presupuesto = tratamiento.total;
+                        abonoLibre = tratamiento.abono_libre;
+                        telefono = telefono;
+                        sucursal = tratamiento.nombre_sucursal;
+                        estadoCita = data[j].estado_cita;
+                        console.log("Nombre del tratamiento: " + tratamiento.nombre);
+                        _context.next = 28;
+                        return pedirDatos('tratamientos/' + tratamiento.id + '/citas', '');
+
+                      case 28:
+                        citasTratamiento = _context.sent;
+
+                        if (!esPrimeraCitaAtendida(citasTratamiento.data, data[j].id)) {
+                          _context.next = 38;
+                          break;
+                        }
+
+                        pacNuevo = true;
+                        console.log("Se encontro primera cita");
+                        motivoConsulta = undefined; // TODO: Ver como arreglar esto
+
                         aux = obtenerProximaCita(citasTratamiento.data, data[j].id);
                         proximaCitaDia = aux.fecha;
-                        horaPC = aux.hora;
-                        abonoLibre = tratamiento.abono_libre;
-                        _telefono = _telefono;
-                        sucursal = tratamiento.nombre_sucursal;
+                        horaPC = aux.hora; //cargo en monday
+
+                        _context.next = 38;
+                        return monday.subirFilaAMonday(itemName, idPaciente, nombreDentista, fechaCita, horaFC, motivoConsulta, primerPago, presupuesto, proximaCitaDia, horaPC, abonoLibre, telefono, sucursal);
+
+                      case 38:
                         dentalink = {
                           name: itemName,
                           id: idPaciente,
-                          nombreDent: nombreDentista
-                        }; //cargo en monday
-                        //TODO: Cargar en google sheet
-
-                        _context.next = 35;
+                          nombreDent: nombreDentista,
+                          idT: idTratamiento,
+                          estCita: estadoCita,
+                          fechaC: fechaCita,
+                          horaC: horaFC,
+                          pPago: primerPago,
+                          pres: presupuesto,
+                          abL: abonoLibre,
+                          tel: telefono,
+                          suc: sucursal,
+                          pNuevo: pacNuevo
+                        };
+                        _context.next = 41;
                         return google.cargarDentalink(dentalink, 'dentalinkCitas', false, presupuesto);
 
-                      case 35:
+                      case 41:
                         j++;
                         _context.next = 1;
                         break;
 
-                      case 38:
+                      case 44:
                       case "end":
                         return _context.stop();
                     }
@@ -125,18 +141,22 @@ function _actualizacionDiaria() {
             console.log("Actualizacion de monday diaria iniciada... "); //cargarCitasDiarias();
 
             _context2.next = 7;
-            return pedirDatos('citas', '?q={"fecha":{"eq":' + date + '}, "id_estado":{"eq":"2"}}');
+            return actualizacionASPreadSIn2();
 
           case 7:
+            _context2.next = 9;
+            return pedirDatos('citas', '?q={"fecha":{"eq":' + date + '}, "id_estado":{"eq":"2"}}');
+
+          case 9:
             infoDentalinkSinprocesar = _context2.sent;
             //infoDentalinkSinprocesar = await buscarPresupuesto(894)
             //infoDentalinkSinprocesar = await buscarProximasCitas(aux,988)
             console.log("Se cargan citas del dia: " + infoDentalinkSinprocesar.data[0].fecha);
-            console.log("cantidad de citas en el dia: " + infoDentalinkSinprocesar.data.length.toString());
+            console.log("cantidad de citas en el dia que fueron atendidas: " + infoDentalinkSinprocesar.data.length.toString());
             ;
             loop(infoDentalinkSinprocesar.data.length, infoDentalinkSinprocesar.data);
 
-          case 12:
+          case 14:
           case "end":
             return _context2.stop();
         }
@@ -460,7 +480,7 @@ function _pedirDatos() {
           case 0:
             _context10.next = 2;
             return new Promise(function (resolve) {
-              return setTimeout(resolve, 2000);
+              return setTimeout(resolve, 5000);
             });
 
           case 2:
@@ -533,4 +553,142 @@ function formatDate(date) {
   if (month.length < 2) month = '0' + month;
   if (day.length < 3) day = '0' + day;
   return [year, month, day].join('-');
+} // not equeal to 2
+
+
+function actualizacionASPreadSIn2() {
+  return _actualizacionASPreadSIn.apply(this, arguments);
+}
+
+function _actualizacionASPreadSIn() {
+  _actualizacionASPreadSIn = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12() {
+    var date, agregarEstado, citas, loop, _loop7;
+
+    return regeneratorRuntime.wrap(function _callee12$(_context12) {
+      while (1) {
+        switch (_context12.prev = _context12.next) {
+          case 0:
+            _loop7 = function _loop9() {
+              _loop7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11(largo, data) {
+                var j, itemName, idPaciente, nombreDentista, fechaCita, horaFC, motivoConsulta, primerPago, presupuesto, proximaCitaDia, horaPC, abonoLibre, telefono, sucursal, tratamiento, idTratamiento, paciente, pacNuevo, estadoCita, citasTratamiento, aux, dentalink;
+                return regeneratorRuntime.wrap(function _callee11$(_context11) {
+                  while (1) {
+                    switch (_context11.prev = _context11.next) {
+                      case 0:
+                        j = 0;
+
+                      case 1:
+                        if (!(j < largo)) {
+                          _context11.next = 36;
+                          break;
+                        }
+
+                        console.log("Estado de la cita: " + data[j].id_estado.toString() + " : " + data[j].estado_cita);
+                        itemName = void 0, idPaciente = void 0, nombreDentista = void 0, fechaCita = void 0, horaFC = void 0, motivoConsulta = void 0, primerPago = void 0, presupuesto = void 0, proximaCitaDia = void 0, horaPC = void 0, abonoLibre = void 0, telefono = void 0, sucursal = void 0;
+                        _context11.next = 6;
+                        return buscarTratamiento(data[j].id_tratamiento);
+
+                      case 6:
+                        tratamiento = _context11.sent;
+                        idTratamiento = tratamiento.id;
+                        _context11.next = 10;
+                        return pedirDatos('pacientes/' + data[j].id_paciente, '');
+
+                      case 10:
+                        paciente = _context11.sent;
+                        telefono = paciente.data.celular;
+
+                        if (telefono == undefined) {
+                          telefono = pactien.data.telefono;
+                        }
+
+                        pacNuevo = false;
+                        itemName = data[j].nombre_paciente;
+                        idPaciente = data[j].id_paciente.toString();
+                        nombreDentista = tratamiento.nombre;
+                        fechaCita = data[j].fecha;
+                        horaFC = data[j].hora_inicio;
+                        primerPago = tratamiento.abonado;
+                        presupuesto = tratamiento.total;
+                        abonoLibre = tratamiento.abono_libre;
+                        telefono = telefono;
+                        sucursal = tratamiento.nombre_sucursal;
+                        estadoCita = data[j].estado_cita;
+                        console.log("Nombre del tratamiento: " + tratamiento.nombre);
+                        _context11.next = 28;
+                        return pedirDatos('tratamientos/' + tratamiento.id + '/citas', '');
+
+                      case 28:
+                        citasTratamiento = _context11.sent;
+
+                        //console.log(data[j].idPaciente)
+                        if (esPrimeraCitaAtendida(citasTratamiento.data, data[j].id)) {
+                          pacNuevo = true;
+                          console.log("Se encontro primera cita");
+                          motivoConsulta = undefined; // TODO: Ver como arreglar esto
+
+                          aux = obtenerProximaCita(citasTratamiento.data, data[j].id);
+                          proximaCitaDia = aux.fecha;
+                          horaPC = aux.hora; //cargo en monday
+                          //TODO: Cargar en google sheet
+                          //await monday.subirFilaAMonday(itemName,idPaciente,nombreDentista,fechaCita,horaFC,motivoConsulta,primerPago,presupuesto,proximaCitaDia,horaPC,abonoLibre,telefono,sucursal);
+                        }
+
+                        dentalink = {
+                          name: itemName,
+                          id: idPaciente,
+                          nombreDent: nombreDentista,
+                          idT: idTratamiento,
+                          estCita: estadoCita,
+                          fechaC: fechaCita,
+                          horaC: horaFC,
+                          pPago: primerPago,
+                          pres: presupuesto,
+                          abL: abonoLibre,
+                          tel: telefono,
+                          suc: sucursal,
+                          pNuevo: pacNuevo
+                        };
+                        _context11.next = 33;
+                        return google.cargarDentalink(dentalink, 'dentalinkCitas', false, presupuesto);
+
+                      case 33:
+                        j++;
+                        _context11.next = 1;
+                        break;
+
+                      case 36:
+                      case "end":
+                        return _context11.stop();
+                    }
+                  }
+                }, _callee11);
+              }));
+              return _loop7.apply(this, arguments);
+            };
+
+            loop = function _loop8(_x11, _x12) {
+              return _loop7.apply(this, arguments);
+            };
+
+            date = obtenerDia();
+            agregarEstado = ', "id_estado":{"neq":"2"}}'; //cargarCitasDiarias();
+
+            _context12.next = 6;
+            return pedirDatos('citas', '?q={"fecha":{"eq":' + date + '}, "id_estado":{"neq":"2"}}');
+
+          case 6:
+            citas = _context12.sent;
+            console.log("cantidad de citas en el dia que no fueron atendidas: " + citas.data.length.toString());
+            ;
+            loop(citas.data.length, citas.data);
+
+          case 10:
+          case "end":
+            return _context12.stop();
+        }
+      }
+    }, _callee12);
+  }));
+  return _actualizacionASPreadSIn.apply(this, arguments);
 }
