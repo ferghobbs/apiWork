@@ -17,7 +17,8 @@ async function actualizacionDiaria(){
 
     //infoDentalinkSinprocesar = await buscarPresupuesto(894)
     //infoDentalinkSinprocesar = await buscarProximasCitas(aux,988)
-    console.log("Se cargan citas del dia: "+ infoDentalinkSinprocesar.data[0].fecha)
+    
+    console.log("Se cargan citas del dia: "+ date)
     console.log("cantidad de citas en el dia que fueron atendidas: "+ infoDentalinkSinprocesar.data.length.toString())
     async function loop(largo, data) {
       for (let j = 0; j < largo; j++) {
