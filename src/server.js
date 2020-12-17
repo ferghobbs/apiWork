@@ -73,7 +73,7 @@ app.post('/RomaNorte', function (req, res, next) {
 });
 
 const WEBHOOK_SECRET6 = 'cfa073430de9b3ecbf290c793aca672a1be8d0987ccadbb6d3e8f626bdf7c357b7e93dedde4af877ee9575b8836300c6';
-const sucursal6 = 'Santa Fe'
+const sucursal6 = 'Santa Fe - Boutique'
 
 app.post('/SantaFe', function (req, res, next) {
 
