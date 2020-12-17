@@ -136,7 +136,6 @@ function tiempo(timeTawkto)
     let dia = new Date(timeTawkto.substr(0, 4),timeTawkto.substr(5, 2)-1,timeTawkto.substr(8, 2),timeTawkto.substr(11, 2),timeTawkto.substr(14, 2),timeTawkto.substr(17,3));
 
     let offset = dia-dia.getTimezoneOffset()*60*1000-6*60*60*1000;
-    console.log(new Date(offset));
 
-
+  return new Date(offset);
 }
