@@ -169,7 +169,7 @@ app.post('/Tecamachalco', function (req, res, next) {
 });
 
 const WEBHOOK_SECRET17 = 'ed3ec3473425f38999634867812f0b67bf2a7546b16e1f18cc7247fb4ce79e86313143dea74a61a5dd6272fd18b7dcde';
-const sucursal17 = 'Satélite'
+const sucursal17 = 'Satelite'
 
 app.post('/Satelite', function (req, res, next) {
 

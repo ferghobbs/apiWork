@@ -54,7 +54,7 @@ app.post('/RomaNorte', function (req, res, next) {
   tawkto.cargarTawkto(req, res, WEBHOOK_SECRET5, sucursal5);
 });
 var WEBHOOK_SECRET6 = 'cfa073430de9b3ecbf290c793aca672a1be8d0987ccadbb6d3e8f626bdf7c357b7e93dedde4af877ee9575b8836300c6';
-var sucursal6 = 'Santa Fe';
+var sucursal6 = 'Santa Fe - Boutique';
 app.post('/SantaFe', function (req, res, next) {
   tawkto.cargarTawkto(req, res, WEBHOOK_SECRET6, sucursal6);
 });

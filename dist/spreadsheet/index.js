@@ -83,8 +83,11 @@ function cargarASpreadsheet(request, hoja, callpicker, ciudad, tawkto) {
     } else {
       if (tawkto) {
         console.log(request.body);
+        var time = tiempo(request.body.time);
+        var hora = time.toString().substr(16, 8);
+        var dia = formatDate(time);
         values = [[// Cell values ... tawkto
-        ciudad, request.body.visitor.name, request.body.time.substr(0, 10), request.body.time.substr(11, 8), request.body.visitor.city, request.body.message.text] // Additional rows ...
+        ciudad, request.body.visitor.name, dia, hora, request.body.visitor.city, request.body.message.text] // Additional rows ...
         ];
       } else {
         //          let dentalink = { name : itemName , id: idPaciente , nombreDent : nombreDentista, idT: idTratamiento , estCita : estadoCita,  fechaC : fechaCita , horaC : horaFC , pPago : primerPago, pres : presupuesto , abL : abonoLibre , tel : telefono , suc : sucursal , pNuevo : pacNuevo  }
@@ -144,3 +147,27 @@ function _cargarDentalink() {
 
 exports.cargarAhoja = cargarASpreadsheet;
 exports.cargarDentalink = cargarDentalink;
+/*
+function tiempo(timeTawkto)
+{
+  let dia = new Date(timeTawkto.substr(0, 4),timeTawkto.substr(5, 2)-1,timeTawkto.substr(8, 2),timeTawkto.substr(11, 2),timeTawkto.substr(14, 2),timeTawkto.substr(17,3));
+    let offset = dia-dia.getTimezoneOffset()*60*1000-6*60*60*1000;
+  return new Date(offset);
+}
+*/
+
+function tiempo(timeTawkto) {
+  var dia = new Date(timeTawkto.substr(0, 4), timeTawkto.substr(5, 2) - 1, timeTawkto.substr(8, 2), timeTawkto.substr(11, 2), timeTawkto.substr(14, 2), timeTawkto.substr(17, 3));
+  var offset = dia - 6 * 60 * 60 * 1000;
+  return new Date(offset);
+}
+
+function formatDate(date) {
+  var d = new Date(date),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = '' + d.getFullYear();
+  if (month.length < 2) month = '0' + month;
+  if (day.length < 2) day = '0' + day;
+  return [year, month, day].join('-');
+}
