@@ -129,7 +129,7 @@ app.post('/Principal', function (req, res, next) {
 });
 
 const WEBHOOK_SECRET12 = '7c8bf9e90589e43fc1572f304592a0807ffc8ea213923885dab6da301fd89838955c9f85a606d78258bcb5f84f5a76fa';
-const sucursal12 = 'Chapultepec'
+const sucursal12 = 'Doctores'
 
 app.post('/Chapultepek', function (req, res, next) {
 
