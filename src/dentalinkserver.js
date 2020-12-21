@@ -8,7 +8,6 @@ var infoDentalinkSinprocesar;
 
 async function actualizacionDiaria(){
     let date = obtenerDia();
-    let agregarEstado = ', "id_estado":{"eq":"2"}}'
     console.log("Actualizacion de monday diaria iniciada... ");
     //cargarCitasDiarias();
     await actualizacionASPreadSIn2();
