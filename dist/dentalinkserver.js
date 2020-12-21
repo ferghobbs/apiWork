@@ -27,7 +27,7 @@ function _actualizacionDiaria() {
           case 0:
             _loop = function _loop3() {
               _loop = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(largo, data) {
-                var j, itemName, idPaciente, nombreDentista, fechaCita, horaFC, motivoConsulta, primerPago, presupuesto, proximaCitaDia, horaPC, abonoLibre, telefono, sucursal, tratamiento, idTratamiento, paciente, pacNuevo, estadoCita, citasTratamiento, aux, dentalink;
+                var j, itemName, idPaciente, nombreDentista, fechaCita, horaFC, motivoConsulta, primerPago, presupuesto, proximaCitaDia, horaPC, abonoLibre, telefono, sucursal, tratamiento, idTratamiento, paciente, pacNuevo, estadoCita, citasPorPaciente, aux, dentalink;
                 return regeneratorRuntime.wrap(function _callee$(_context) {
                   while (1) {
                     switch (_context.prev = _context.next) {
@@ -73,21 +73,20 @@ function _actualizacionDiaria() {
                         estadoCita = data[j].estado_cita;
                         console.log("Nombre del tratamiento: " + tratamiento.nombre);
                         _context.next = 28;
-                        return pedirDatos('tratamientos/' + tratamiento.id + '/citas', '');
+                        return pedirDatos('pacientes/' + idPaciente + '/citas', '');
 
                       case 28:
-                        citasTratamiento = _context.sent;
+                        citasPorPaciente = _context.sent;
 
-                        if (!esPrimeraCitaAtendida(citasTratamiento.data, data[j].id)) {
+                        if (!esPrimeraCitaAtendida(citasPorPaciente.data, data[j].id)) {
                           _context.next = 38;
                           break;
                         }
 
                         pacNuevo = true;
                         console.log("Se encontro primera cita");
-                        motivoConsulta = undefined; // TODO: Ver como arreglar esto
-
-                        aux = obtenerProximaCita(citasTratamiento.data, data[j].id);
+                        motivoConsulta = undefined;
+                        aux = obtenerProximaCita(citasPorPaciente.data, data[j].id);
                         proximaCitaDia = aux.fecha;
                         horaPC = aux.hora; //cargo en monday
 
@@ -128,15 +127,14 @@ function _actualizacionDiaria() {
               return _loop.apply(this, arguments);
             };
 
-            loop = function _loop2(_x4, _x5) {
+            loop = function _loop2(_x5, _x6) {
               return _loop.apply(this, arguments);
             };
 
             date = obtenerDia();
-            console.log("Actualizacion de monday diaria iniciada... "); //cargarCitasDiarias();
-
+            console.log("Actualizacion de monday diaria iniciada... ");
             _context2.next = 6;
-            return actualizacionASPreadSIn2();
+            return actualizacionASPreadSIn2(date);
 
           case 6:
             _context2.next = 8;
@@ -169,7 +167,7 @@ function esPrimeraCitaAtendida(citasTratamiento, citaId) {
   var esPrimeraCita = false;
   var i = citasTratamiento.length - 1;
   var loop = true;
-  console.log("CAntidad de citas por tratamiento : " + (i + 1).toString());
+  console.log("CAntidad de citas del paciente : " + (i + 1).toString());
 
   while (loop && i >= 0) {
     if (citasTratamiento[i].estado_cita == "Atendido") {
@@ -306,12 +304,12 @@ function formatDate(date) {
 } // Carga citas que no fueron atendidas a goggle sheet
 
 
-function actualizacionASPreadSIn2() {
+function actualizacionASPreadSIn2(_x4) {
   return _actualizacionASPreadSIn.apply(this, arguments);
 }
 
 function _actualizacionASPreadSIn() {
-  _actualizacionASPreadSIn = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
+  _actualizacionASPreadSIn = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(day) {
     var date, agregarEstado, citas, loop, _loop4;
 
     return regeneratorRuntime.wrap(function _callee6$(_context6) {
@@ -413,11 +411,11 @@ function _actualizacionASPreadSIn() {
               return _loop4.apply(this, arguments);
             };
 
-            loop = function _loop5(_x6, _x7) {
+            loop = function _loop5(_x7, _x8) {
               return _loop4.apply(this, arguments);
             };
 
-            date = obtenerDia();
+            date = day;
             agregarEstado = ', "id_estado":{"neq":"2"}}'; //cargarCitasDiarias();
 
             _context6.next = 6;

@@ -9,8 +9,8 @@ var infoDentalinkSinprocesar;
 async function actualizacionDiaria(){
     let date = obtenerDia();
     console.log("Actualizacion de monday diaria iniciada... ");
-    //cargarCitasDiarias();
-    await actualizacionASPreadSIn2();
+
+    await actualizacionASPreadSIn2(date);
     infoDentalinkSinprocesar = await pedirDatos('citas','?q={"fecha":{"eq":'+date+'}, "id_estado":{"eq":"2"}}')
 
     
@@ -40,17 +40,16 @@ async function actualizacionDiaria(){
           sucursal = tratamiento.nombre_sucursal
           let estadoCita = data[j].estado_cita;
           
-          
           console.log("Nombre del tratamiento: "+ tratamiento.nombre)
-          let citasTratamiento = await pedirDatos('tratamientos/'+tratamiento.id+'/citas','')
-          //console.log(data[j].idPaciente)
-          if(esPrimeraCitaAtendida(citasTratamiento.data,data[j].id ))
+          let citasPorPaciente = await pedirDatos('pacientes/'+idPaciente+'/citas','')
+
+          if(esPrimeraCitaAtendida(citasPorPaciente.data,data[j].id ))
           { 
             pacNuevo = true;
             console.log("Se encontro primera cita")
             
-            motivoConsulta = undefined; // TODO: Ver como arreglar esto
-            let aux = obtenerProximaCita(citasTratamiento.data,data[j].id);
+            motivoConsulta = undefined;
+            let aux = obtenerProximaCita(citasPorPaciente.data,data[j].id);
             proximaCitaDia = aux.fecha;
             horaPC = aux.hora;
 
@@ -73,6 +72,7 @@ function obtenerDia()
   let date1 = new Date();
   let date = (date1 - 1000* 60 *60 *24)
   return formatDate(date)
+  
 
 }
 function esPrimeraCitaAtendida(citasTratamiento,citaId )
@@ -80,7 +80,7 @@ function esPrimeraCitaAtendida(citasTratamiento,citaId )
     let esPrimeraCita= false;
     let i = citasTratamiento.length-1;
     let loop = true;
-    console.log("CAntidad de citas por tratamiento : "+ (i+1).toString());
+    console.log("CAntidad de citas del paciente : "+ (i+1).toString());
     while(loop && i>=0)
     {
       if(citasTratamiento[i].estado_cita == "Atendido")
@@ -180,8 +180,8 @@ function formatDate(date) {
 
 // Carga citas que no fueron atendidas a goggle sheet
 
-async function actualizacionASPreadSIn2(){
-  let date = obtenerDia();
+async function actualizacionASPreadSIn2(day){
+  let date = day;
   let agregarEstado = ', "id_estado":{"neq":"2"}}'
   //cargarCitasDiarias();
   let citas = await pedirDatos('citas','?q={"fecha":{"eq":'+date+'}, "id_estado":{"neq":"2"}}')
